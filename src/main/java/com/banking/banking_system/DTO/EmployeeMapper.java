@@ -9,13 +9,11 @@ public class EmployeeMapper {
                 employee.getSurname(),
                 employee.getEmail(),
                 employee.getPosition(),
-                employee.getPassword(),
-                employee.getTC(),
+                employee.getTc(),
                 employee.getAge(),
                 employee.getDepartment(),
                 employee.getPhoneNumber(),
-                employee.getRole(),
-                employee.getCreatedAt()
+                employee.getRole()
         );
     }
 
@@ -25,13 +23,11 @@ public class EmployeeMapper {
                 .surname(employeeDTO.getSurname())
                 .email(employeeDTO.getEmail())
                 .position(employeeDTO.getPosition())
-                .password(employeeDTO.getPassword())
-                .TC(employeeDTO.getTC())
+                .tc(employeeDTO.getTc())
                 .age(employeeDTO.getAge())
                 .department(employeeDTO.getDepartment())
                 .phoneNumber(employeeDTO.getPhoneNumber())
                 .role(employeeDTO.getRole())
-                .createdAt(employeeDTO.getCreatedAt())
                 .build();
     }
 }

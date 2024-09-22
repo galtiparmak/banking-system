@@ -5,11 +5,10 @@ import com.banking.banking_system.Entity.User;
 public class UserMapper {
     public static UserDTO toDTO(User user) {
         return new UserDTO(
-                user.getTC(),
+                user.getTc(),
                 user.getName(),
                 user.getSurname(),
                 user.getEmail(),
-                user.getPassword(),
                 user.getAge(),
                 user.getRole()
         );
@@ -17,11 +16,10 @@ public class UserMapper {
 
     public static User toUser(UserDTO userDTO) {
         return User.builder()
-                .TC(userDTO.getTC())
+                .tc(userDTO.getTc())
                 .name(userDTO.getName())
                 .surname(userDTO.getSurname())
                 .email(userDTO.getEmail())
-                .password(userDTO.getPassword())
                 .age(userDTO.getAge())
                 .role(userDTO.getRole())
                 .build();
