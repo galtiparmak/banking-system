@@ -8,6 +8,6 @@ import java.util.Optional;
 
 @Repository
 public interface CardRequestRepository extends JpaRepository<CardRequest, Long> {
-    public Optional<CardRequest> findByUserTC(String userTC);
+    public Optional<CardRequest> findByUserTc(String userTc);
     public Optional<CardRequest> findByCardType(String cardType);
 }
