@@ -1,5 +1,6 @@
 package com.banking.banking_system.Authentication;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AuthenticationRequest {
-    private String TC;
+    @JsonProperty("tc")
+    private String tc;
     private String password;
 }

@@ -1,4 +1,4 @@
-package com.banking.banking_system.Authentication;
+package com.banking.banking_system.Configuration;
 
 import com.banking.banking_system.Entity.Admin;
 import com.banking.banking_system.Entity.Employee;
@@ -32,12 +32,12 @@ public class AppConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         return identifier -> {
-            Optional<User> optionalUser = userRepository.findByTC(identifier);
+            Optional<User> optionalUser = userRepository.findByTc(identifier);
             if (optionalUser.isPresent()) {
                 return optionalUser.get();
             }
 
-            Optional<Employee> optionalEmployee = employeeRepository.findByTC(identifier);
+            Optional<Employee> optionalEmployee = employeeRepository.findByTc(identifier);
             if (optionalEmployee.isPresent()) {
                 return optionalEmployee.get();
             }
