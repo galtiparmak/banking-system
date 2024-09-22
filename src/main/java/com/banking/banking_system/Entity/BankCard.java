@@ -24,6 +24,9 @@ public class BankCard extends Card {
     public void setPassword(String password) {
         super.setCardPassword(password);
     }
+    public String getPassword() {
+        return super.getCardPassword();
+    }
 
     public void setIsActive(boolean isActive) {
         super.setActive(isActive);

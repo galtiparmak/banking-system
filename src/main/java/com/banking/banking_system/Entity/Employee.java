@@ -22,7 +22,7 @@ public class Employee implements UserDetails {
     private Long id;
 
     @Column(unique = true, nullable = false)
-    private String TC;
+    private String tc;
 
     @Column(nullable = false)
     private String name;
@@ -36,22 +36,23 @@ public class Employee implements UserDetails {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
+    @Column
     private int age;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Role role;
 
     @Column(nullable = false)
     private Date createdAt;
 
-    @Column(nullable = false)
+    @Column
     private String position;
 
-    @Column(nullable = false)
+    @Column
     private String department;
 
-    @Column(nullable = false)
+    @Column
     private String phoneNumber;
 
     @Override
@@ -61,7 +62,7 @@ public class Employee implements UserDetails {
 
     @Override
     public String getUsername() {
-        return TC;
+        return tc;
     }
 
     @Override

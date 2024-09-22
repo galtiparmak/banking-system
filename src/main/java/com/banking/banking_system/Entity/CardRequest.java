@@ -17,6 +17,5 @@ public class CardRequest {
     @Id
     private Long id;
     private String cardType;
-    private String userTC;
-
+    private String userTc;
 }

@@ -25,7 +25,7 @@ public class User implements UserDetails {
     private Long id;
 
     @Column(unique = true, nullable = false)
-    private String TC;
+    private String tc;
 
     @Column(nullable = false)
     private String name;
@@ -39,7 +39,7 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
+    @Column
     private int age;
 
     @Enumerated(EnumType.STRING)
@@ -49,10 +49,10 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private Date createdAt;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<CreditCard> creditCards;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<BankCard> bankCards;
 
     @Override
@@ -62,7 +62,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return TC;
+        return tc;
     }
 
     @Override

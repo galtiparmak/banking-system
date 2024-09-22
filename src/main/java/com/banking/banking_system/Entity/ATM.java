@@ -17,6 +17,8 @@ public class ATM {
     @Id
     private Long id;
 
+    private double balance;
+
     @Column(nullable = false)
     private String location;
 
