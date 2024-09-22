@@ -18,21 +18,21 @@ public class CardRequestController {
         this.cardRequestService = cardRequestService;
     }
 
-    @GetMapping("/requestCard")
+    @PostMapping("/requestCard")
     public ResponseEntity<String> requestCard(@RequestBody CardRequest request) {
         if (cardRequestService.requestCard(request)) {
             return ResponseEntity.ok("Card request is successful.");
         } else {
             return ResponseEntity.badRequest().body("Card request is unsuccessful.");
         }
-    } // https://localhost:8080/api/cardRequest/requestCard
+    } // http://localhost:8080/api/cardRequest/requestCard
 
-    @GetMapping("/cancelCardRequest")
-    public ResponseEntity<String> cancelCardRequest(@RequestParam String userTC) {
-        if (cardRequestService.cancelCardRequest(userTC)) {
+    @PostMapping("/cancelCardRequest")
+    public ResponseEntity<String> cancelCardRequest(@RequestParam Long requestID) {
+        if (cardRequestService.cancelCardRequest(requestID)) {
             return ResponseEntity.ok("Card request is cancelled.");
         } else {
             return ResponseEntity.badRequest().body("Card request is not cancelled.");
         }
-    } // https://localhost:8080/api/cardRequest/cancelCardRequest?userTC=...
+    } // http://localhost:8080/api/cardRequest/cancelCardRequest?userTC=...
 }

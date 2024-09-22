@@ -20,12 +20,12 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<UserDTO> getUser(@PathVariable String TC) {
+    public ResponseEntity<UserDTO> getUser(@RequestParam String TC) {
         return ResponseEntity.ok(userService.getUser(TC));
     } // http://localhost:8080/api/user/me?TC=...
 
     @GetMapping("/bankCard")
-    public ResponseEntity<String> doesUserHaveBankCard(@PathVariable String TC) {
+    public ResponseEntity<String> doesUserHaveBankCard(@RequestParam String TC) {
         if (userService.doesUserHaveBankCard(TC)) {
             return ResponseEntity.ok("User has bank card");
         } else {
@@ -59,7 +59,7 @@ public class UserController {
     @PostMapping("/reset-account-password")
     public ResponseEntity<String> resetPassword(@RequestParam String token, @RequestParam String password) {
         return ResponseEntity.ok(mailService.resetPassword(token, password));
-    } // http://localhost:8080/api/user/reset-account-password?token=...&TC=...
+    } // http://localhost:8080/api/user/reset-account-password?token=...&password=...
 
 
     @PostMapping("/reset-card-password")
