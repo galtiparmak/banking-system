@@ -1,0 +1,36 @@
+networks:
+  springboot-mysql-net:
+    driver: bridge
+
+services:
+  mysqldb:
+    image: mysql:8
+    container_name: mysqldbBankSystem
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: bankSystem
+      MYSQL_USER: geko
+      MYSQL_PASSWORD: gekopassword
+    networks:
+      - springboot-mysql-net
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  springboot-container:
+    build: .
+    container_name: BankSystem
+    networks:
+      - springboot-mysql-net
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/bankSystem
+      SPRING_DATASOURCE_USERNAME: geko
+      SPRING_DATASOURCE_PASSWORD: gekopassword
+    depends_on:
+      - mysqldb
+
+volumes:
+  db_data:
