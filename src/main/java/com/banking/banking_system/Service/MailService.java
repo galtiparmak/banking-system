@@ -87,13 +87,13 @@ public class MailService {
 
     public void sendCardPasswordResetEmail(String email, String resetToken) {
         String subject = "Card Password Reset Request";
-        String resetUrlPath = "/api/employee/reset-card-password";
+        String resetUrlPath = "/api/user/reset-card-password";
         sendPasswordResetEmail(email, resetToken, subject, resetUrlPath);
     }
 
 
-    public String resetPasswordRequest(String TC) {
-        Optional<User> optionalUser = userRepository.findByTC(TC);
+    public String resetPasswordRequest(String tc) {
+        Optional<User> optionalUser = userRepository.findByTc(tc);
         if (optionalUser.isEmpty()) {
             return "User not found";
         }

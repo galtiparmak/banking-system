@@ -2,7 +2,6 @@ package com.banking.banking_system.Service;
 
 import com.banking.banking_system.Entity.CardRequest;
 import com.banking.banking_system.Repository.CardRequestRepository;
-import com.banking.banking_system.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +18,7 @@ public class CardRequestService {
         try {
             CardRequest cardRequest = new CardRequest();
             cardRequest.setCardType(request.getCardType());
-            cardRequest.setUserTC(request.getUserTC());
+            cardRequest.setUserTc(request.getUserTc());
 
             cardRequestRepository.save(cardRequest);
             return true;
@@ -29,9 +28,9 @@ public class CardRequestService {
         }
     }
 
-    public boolean cancelCardRequest(String userTC) {
+    public boolean cancelCardRequest(Long requestID) {
         try {
-            Optional<CardRequest> optionalCardRequest = cardRequestRepository.findByUserTC(userTC);
+            Optional<CardRequest> optionalCardRequest = cardRequestRepository.findById(requestID);
             if (optionalCardRequest.isEmpty()) {
                 return false;
             }

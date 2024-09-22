@@ -19,8 +19,8 @@ public class UserService {
     }
 
 
-    public boolean doesUserHaveBankCard(String TC) {
-        Optional<User> optionalUser = userRepository.findByTC(TC);
+    public boolean doesUserHaveBankCard(String tc) {
+        Optional<User> optionalUser = userRepository.findByTc(tc);
         if (optionalUser.isEmpty()) {
             return false;
         }
@@ -30,8 +30,8 @@ public class UserService {
         return user.getBankCards().size() > 0;
     }
 
-    public boolean doesUserHaveCreditCard(String TC) {
-        Optional<User> optionalUser = userRepository.findByTC(TC);
+    public boolean doesUserHaveCreditCard(String tc) {
+        Optional<User> optionalUser = userRepository.findByTc(tc);
         if (optionalUser.isEmpty()) {
             return false;
         }
@@ -41,8 +41,8 @@ public class UserService {
         return user.getCreditCards().size() > 0;
     }
 
-    public UserDTO getUser(String TC) {
-        Optional<User> optionalUser = userRepository.findByTC(TC);
+    public UserDTO getUser(String tc) {
+        Optional<User> optionalUser = userRepository.findByTc(tc);
         if (optionalUser.isEmpty()) {
             return null;
         }
@@ -52,16 +52,17 @@ public class UserService {
         return UserMapper.toDTO(user);
     }
 
-    public boolean updateUserAge(String TC, int age) {
-        Optional<User> optionalUser = userRepository.findByTC(TC);
+    public boolean updateUserAge(String tc, int age) {
+        Optional<User> optionalUser = userRepository.findByTc(tc);
         if (optionalUser.isEmpty()) {
             return false;
         }
 
         User user = optionalUser.get();
         user.setAge(age);
+
+        userRepository.save(user);
         return true;
     }
-
 
 }

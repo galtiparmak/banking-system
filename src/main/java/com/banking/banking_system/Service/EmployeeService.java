@@ -1,9 +1,6 @@
 package com.banking.banking_system.Service;
 
-import com.banking.banking_system.DTO.CardDTO;
-import com.banking.banking_system.DTO.CardMapper;
-import com.banking.banking_system.DTO.EmployeeDTO;
-import com.banking.banking_system.DTO.EmployeeMapper;
+import com.banking.banking_system.DTO.*;
 import com.banking.banking_system.Entity.*;
 import com.banking.banking_system.Repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +11,6 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class EmployeeService {
@@ -43,8 +39,8 @@ public class EmployeeService {
         this.userRepository = userRepository;
     }
 
-    public EmployeeDTO getEmployee(String TC) {
-        Optional<Employee> optionalEmployee = employeeRepository.findByTC(TC);
+    public EmployeeDTO getEmployee(String tc) {
+        Optional<Employee> optionalEmployee = employeeRepository.findByTc(tc);
         if (optionalEmployee.isEmpty()) {
             throw new RuntimeException("Employee not found");
         }
@@ -52,20 +48,73 @@ public class EmployeeService {
         return EmployeeMapper.toDTO(employee);
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public void updateEmployeePosition(String tc, String position) {
+        Optional<Employee> optionalEmployee = employeeRepository.findByTc(tc);
+        if (optionalEmployee.isEmpty()) {
+            throw new RuntimeException("Employee not found");
+        }
+        Employee employee = optionalEmployee.get();
+        employee.setPosition(position);
+        employeeRepository.save(employee);
     }
 
-    public List<CreditCard> getAllCreditCards() {
-        return creditCardRepository.findAll();
+    public void updateEmployeeAge(String tc, int age) {
+        Optional<Employee> optionalEmployee = employeeRepository.findByTc(tc);
+        if (optionalEmployee.isEmpty()) {
+            throw new RuntimeException("Employee not found");
+        }
+        Employee employee = optionalEmployee.get();
+        employee.setAge(age);
+        employeeRepository.save(employee);
     }
 
-    public List<BankCard> getAllBankCards() {
-        return bankCardRepository.findAll();
+    public void updateEmployeePhoneNumber(String tc, String phoneNumber) {
+        Optional<Employee> optionalEmployee = employeeRepository.findByTc(tc);
+        if (optionalEmployee.isEmpty()) {
+            throw new RuntimeException("Employee not found");
+        }
+        Employee employee = optionalEmployee.get();
+        employee.setPhoneNumber(phoneNumber);
+        employeeRepository.save(employee);
     }
 
-    public List<CardDTO> getAllCardsOfUser(String TC) {
-        Optional<User> optionalUser = userRepository.findByTC(TC);
+    public void updateEmployeeDepartment(String tc, String department) {
+        Optional<Employee> optionalEmployee = employeeRepository.findByTc(tc);
+        if (optionalEmployee.isEmpty()) {
+            throw new RuntimeException("Employee not found");
+        }
+        Employee employee = optionalEmployee.get();
+        employee.setDepartment(department);
+        employeeRepository.save(employee);
+    }
+
+    public List<UserDTO> getAllUsers() {
+        List<User> users = userRepository.findAll();
+        List<UserDTO> userDTOS = new ArrayList<>();
+        for (User user : users) {
+            userDTOS.add(UserMapper.toDTO(user));
+        }
+        return userDTOS;
+    }
+
+    public List<CardDTO> getAllCreditCards() {
+        List<CardDTO> cardDTOS = new ArrayList<>();
+        for (CreditCard creditCard : creditCardRepository.findAll()) {
+            cardDTOS.add(CardMapper.toDTO(creditCard));
+        }
+        return cardDTOS;
+    }
+
+    public List<CardDTO> getAllBankCards() {
+        List<CardDTO> cardDTOS = new ArrayList<>();
+        for (BankCard bankCard : bankCardRepository.findAll()) {
+            cardDTOS.add(CardMapper.toDTO(bankCard));
+        }
+        return cardDTOS;
+    }
+
+    public List<CardDTO> getAllCardsOfUser(String tc) {
+        Optional<User> optionalUser = userRepository.findByTc(tc);
         if (optionalUser.isEmpty()) {
             throw new RuntimeException("User not found");
         }
@@ -85,6 +134,7 @@ public class EmployeeService {
 
 
     public List<CardRequest> getAllCardRequests() {
+
         return cardRequestRepository.findAll();
     }
 
@@ -136,7 +186,7 @@ public class EmployeeService {
         }
         CardRequest cardRequest = optionalCardRequest.get();
 
-        Optional<User> optionalUser = userRepository.findByTC(cardRequest.getUserTC());
+        Optional<User> optionalUser = userRepository.findByTc(cardRequest.getUserTc());
         if (optionalUser.isEmpty()) {
             return false;
         }
@@ -157,7 +207,7 @@ public class EmployeeService {
         }
         CardRequest cardRequest = optionalCardRequest.get();
 
-        Optional<User> optionalUser = userRepository.findByTC(cardRequest.getUserTC());
+        Optional<User> optionalUser = userRepository.findByTc(cardRequest.getUserTc());
         if (optionalUser.isEmpty()) {
             return false;
         }
@@ -172,6 +222,22 @@ public class EmployeeService {
 
     public List<CardPasswordResetToken> getAllCardPasswordResetTokens() {
         return cardPasswordResetTokenRepository.findAll();
+    }
+
+    public boolean deleteUser(String tc) {
+        try {
+            Optional <User> optionalUser = userRepository.findByTc(tc);
+            if (optionalUser.isEmpty()) {
+                return false;
+            }
+            User user = optionalUser.get();
+            userRepository.delete(user);
+            return true;
+
+        } catch (RuntimeException e) {
+            System.err.println(e.getMessage());
+            return false;
+        }
     }
 
     // Helpers

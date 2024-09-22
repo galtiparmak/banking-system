@@ -2,7 +2,6 @@ package com.banking.banking_system.Service;
 
 import com.banking.banking_system.Authentication.AuthenticationRequest;
 import com.banking.banking_system.Authentication.AuthenticationResponse;
-import com.banking.banking_system.Authentication.RegisterEmployeeRequest;
 import com.banking.banking_system.Authentication.RegisterUserRequest;
 import com.banking.banking_system.Entity.*;
 import com.banking.banking_system.Repository.AdminRepository;
@@ -28,10 +27,11 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
-    public AuthenticationResponse register(RegisterUserRequest request) {
+    public AuthenticationResponse registerUser(RegisterUserRequest request) {
+        System.out.println("TC Value: " + request.getTc());
         var _user = User
                 .builder()
-                .TC(request.getTC())
+                .tc(request.getTc())
                 .name(request.getName())
                 .surname(request.getSurname())
                 .email(request.getEmail())
@@ -53,37 +53,12 @@ public class AuthenticationService {
                 .build();
     }
 
-    public AuthenticationResponse registerEmployee(RegisterEmployeeRequest request) {
-        var employee = Employee
-                .builder()
-                .TC(request.getTC())
-                .name(request.getName())
-                .surname(request.getSurname())
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .age(request.getAge())
-                .role(Role.EMPLOYEE)
-                .position(request.getPosition())
-                .department(request.getDepartment())
-                .phoneNumber(request.getPhoneNumber())
-                .createdAt(new java.util.Date())
-                .build();
-
-        employeeRepository.save(employee);
-
-        var token = jwtService.generateToken(employee);
-
-        return AuthenticationResponse
-                .builder()
-                .token(token)
-                .build();
-    }
-
     public AuthenticationResponse createAdmin(String username, String password) {
         var admin = Admin
                 .builder()
                 .username(username)
                 .password(passwordEncoder.encode(password))
+                .role(Role.ADMIN)
                 .build();
 
         adminRepository.save(admin);
@@ -96,17 +71,53 @@ public class AuthenticationService {
                 .build();
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+    public AuthenticationResponse authenticateAdmin(String username, String password) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        request.getTC(), request.getPassword()
+                        username, password
                 )
         );
 
-        var bank_user = userRepository.findByTC(request.getTC())
+        var admin = adminRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Admin not found"));
+
+        var token = jwtService.generateToken(admin);
+
+        return AuthenticationResponse
+                .builder()
+                .token(token)
+                .build();
+    }
+
+    public AuthenticationResponse authenticateUser(AuthenticationRequest request) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getTc(), request.getPassword()
+                )
+        );
+
+        var user = userRepository.findByTc(request.getTc())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        var token = jwtService.generateToken(bank_user);
+        var token = jwtService.generateToken(user);
+
+        return AuthenticationResponse
+                .builder()
+                .token(token)
+                .build();
+    }
+
+    public AuthenticationResponse authenticateEmployee(AuthenticationRequest request) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getTc(), request.getPassword()
+                )
+        );
+
+        var employee = employeeRepository.findByTc(request.getTc())
+                .orElseThrow(() -> new UsernameNotFoundException("Employee not found"));
+
+        var token = jwtService.generateToken(employee);
 
         return AuthenticationResponse
                 .builder()
