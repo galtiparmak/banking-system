@@ -72,7 +72,7 @@ public class MailService {
 
         SimpleMailMessage emailMessage = new SimpleMailMessage();
         emailMessage.setTo(email);
-        emailMessage.setFrom("geko_0629@hotmail.com");
+        emailMessage.setFrom("****");
         emailMessage.setSubject(subject);
         emailMessage.setText(message);
 
