@@ -1,8 +1,10 @@
 package com.banking.banking_system.Service;
 
+import com.banking.banking_system.Repository.SessionTokenRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -16,10 +18,13 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Service
+@RequiredArgsConstructor
 public class JwtService {
 
     @Value("${jwt.secret}")
     private String secretKey;
+
+    private final SessionTokenRepository sessionTokenRepository;
 
     public String extractUserName(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -46,7 +51,9 @@ public class JwtService {
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUserName(token);
-        return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+        boolean isValidToken = sessionTokenRepository.findByToken(token)
+                                .map(t -> !t.isLoggedOut()).orElse(false);
+        return username.equals(userDetails.getUsername()) && !isTokenExpired(token) && isValidToken;
     }
 
     private boolean isTokenExpired(String token) {

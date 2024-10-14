@@ -6,6 +6,7 @@ import com.banking.banking_system.Authentication.RegisterUserRequest;
 import com.banking.banking_system.Entity.*;
 import com.banking.banking_system.Repository.AdminRepository;
 import com.banking.banking_system.Repository.EmployeeRepository;
+import com.banking.banking_system.Repository.SessionTokenRepository;
 import com.banking.banking_system.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -26,9 +28,9 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final SessionTokenRepository sessionTokenRepository;
 
     public AuthenticationResponse registerUser(RegisterUserRequest request) {
-        System.out.println("TC Value: " + request.getTc());
         var _user = User
                 .builder()
                 .tc(request.getTc())
@@ -101,6 +103,9 @@ public class AuthenticationService {
 
         var token = jwtService.generateToken(user);
 
+        getValidTokens(user);
+        saveSessionToken(user, token);
+
         return AuthenticationResponse
                 .builder()
                 .token(token)
@@ -123,5 +128,23 @@ public class AuthenticationService {
                 .builder()
                 .token(token)
                 .build();
+    }
+
+    private void saveSessionToken(User _user, String token) {
+        SessionToken sessionToken = new SessionToken();
+        sessionToken.setUser(_user);
+        sessionToken.setToken(token);
+        sessionToken.setLoggedOut(false);
+        sessionTokenRepository.save(sessionToken);
+    }
+
+    private void getValidTokens(User user) {
+        List<SessionToken> validTokens = sessionTokenRepository.findAllByUser(user.getId());
+        if (!validTokens.isEmpty()) {
+            validTokens.forEach(t -> {
+                t.setLoggedOut(true);}
+            );
+        }
+        sessionTokenRepository.saveAll(validTokens);
     }
 }
