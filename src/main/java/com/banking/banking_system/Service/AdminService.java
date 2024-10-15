@@ -99,11 +99,13 @@ public class AdminService {
 
         employeeRepository.save(employee);
 
-        var token = jwtService.generateToken(employee);
+        var accessToken = jwtService.generateAccessToken(employee);
+        var refreshToken = jwtService.generateRefreshToken(employee);
 
         return AuthenticationResponse
                 .builder()
-                .token(token)
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .build();
     }
 

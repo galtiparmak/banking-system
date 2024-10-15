@@ -64,7 +64,7 @@ public class AuthenticationServiceTest {
         request.setAge(30);
 
         when(passwordEncoder.encode("password")).thenReturn("encodedPassword");
-        when(jwtService.generateToken(any(User.class))).thenReturn("jwtToken");
+        when(jwtService.generateAccessToken(any(User.class))).thenReturn("jwtToken");
 
         AuthenticationResponse response = authenticationService.registerUser(request);
 
@@ -80,7 +80,7 @@ public class AuthenticationServiceTest {
         String password = "password";
 
         when(passwordEncoder.encode("password")).thenReturn("encodedPassword");
-        when(jwtService.generateToken(any(Admin.class))).thenReturn("jwtToken");
+        when(jwtService.generateAccessToken(any(Admin.class))).thenReturn("jwtToken");
 
         AuthenticationResponse response = authenticationService.createAdmin(username, password);
 
@@ -100,7 +100,7 @@ public class AuthenticationServiceTest {
         admin.setPassword("encodedPassword");
 
         when(adminRepository.findByUsername(username)).thenReturn(Optional.of(admin));
-        when(jwtService.generateToken(admin)).thenReturn("jwtToken");
+        when(jwtService.generateAccessToken(admin)).thenReturn("jwtToken");
 
         AuthenticationResponse response = authenticationService.authenticateAdmin(username, password);
 
@@ -133,7 +133,7 @@ public class AuthenticationServiceTest {
         user.setPassword("encodedPassword");
 
         when(userRepository.findByTc("12345678901")).thenReturn(Optional.of(user));
-        when(jwtService.generateToken(user)).thenReturn("jwtToken");
+        when(jwtService.generateAccessToken(user)).thenReturn("jwtToken");
 
         AuthenticationResponse response = authenticationService.authenticateUser(request);
 
@@ -167,7 +167,7 @@ public class AuthenticationServiceTest {
         employee.setPassword("encodedPassword");
 
         when(employeeRepository.findByTc("98765432101")).thenReturn(Optional.of(employee));
-        when(jwtService.generateToken(employee)).thenReturn("jwtToken");
+        when(jwtService.generateAccessToken(employee)).thenReturn("jwtToken");
 
         AuthenticationResponse response = authenticationService.authenticateEmployee(request);
 

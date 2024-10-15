@@ -179,7 +179,7 @@ public class AdminServiceTest {
         request.setPhoneNumber("1234567890");
 
         when(passwordEncoder.encode("password")).thenReturn("encodedPassword");
-        when(jwtService.generateToken(any(Employee.class))).thenReturn("jwtToken");
+        when(jwtService.generateAccessToken(any(Employee.class))).thenReturn("jwtToken");
 
         AuthenticationResponse result = adminService.createEmployee(request);
 

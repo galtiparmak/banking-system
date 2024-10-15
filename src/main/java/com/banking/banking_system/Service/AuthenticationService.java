@@ -8,7 +8,12 @@ import com.banking.banking_system.Repository.AdminRepository;
 import com.banking.banking_system.Repository.EmployeeRepository;
 import com.banking.banking_system.Repository.SessionTokenRepository;
 import com.banking.banking_system.Repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -47,11 +52,15 @@ public class AuthenticationService {
 
         userRepository.save(_user);
 
-        var token = jwtService.generateToken(_user);
+        var accessToken = jwtService.generateAccessToken(_user);
+        var refreshToken = jwtService.generateRefreshToken(_user);
+
+        saveSessionToken(_user, accessToken, refreshToken);
 
         return AuthenticationResponse
                 .builder()
-                .token(token)
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .build();
     }
 
@@ -65,11 +74,13 @@ public class AuthenticationService {
 
         adminRepository.save(admin);
 
-        var token = jwtService.generateToken(admin);
+        var accessToken = jwtService.generateAccessToken(admin);
+        var refreshToken = jwtService.generateRefreshToken(admin);
 
         return AuthenticationResponse
                 .builder()
-                .token(token)
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .build();
     }
 
@@ -83,11 +94,13 @@ public class AuthenticationService {
         var admin = adminRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Admin not found"));
 
-        var token = jwtService.generateToken(admin);
+        var accessToken = jwtService.generateAccessToken(admin);
+        var refreshToken = jwtService.generateRefreshToken(admin);
 
         return AuthenticationResponse
                 .builder()
-                .token(token)
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .build();
     }
 
@@ -101,14 +114,16 @@ public class AuthenticationService {
         var user = userRepository.findByTc(request.getTc())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        var token = jwtService.generateToken(user);
+        var accessToken = jwtService.generateAccessToken(user);
+        var refreshToken = jwtService.generateRefreshToken(user);
 
-        getValidTokens(user);
-        saveSessionToken(user, token);
+        revokeAllTokenByUser(user);
+        saveSessionToken(user, accessToken, refreshToken);
 
         return AuthenticationResponse
                 .builder()
-                .token(token)
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .build();
     }
 
@@ -122,23 +137,55 @@ public class AuthenticationService {
         var employee = employeeRepository.findByTc(request.getTc())
                 .orElseThrow(() -> new UsernameNotFoundException("Employee not found"));
 
-        var token = jwtService.generateToken(employee);
+        var accessToken = jwtService.generateAccessToken(employee);
+        var refreshToken = jwtService.generateRefreshToken(employee);
 
         return AuthenticationResponse
                 .builder()
-                .token(token)
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .build();
     }
 
-    private void saveSessionToken(User _user, String token) {
+    public ResponseEntity refreshTokenForUser(HttpServletRequest request, HttpServletResponse response) {
+        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+        }
+
+        String token = authHeader.substring(7);
+        String tc = jwtService.extractUserName(token);
+        User user = userRepository.findByTc(tc)
+                .orElseThrow(() -> new UsernameNotFoundException("User Not Found!"));
+
+        if (jwtService.isRefreshTokenValid(token, user)) {
+            String accessToken = jwtService.generateAccessToken(user);
+            String refreshToken = jwtService.generateRefreshToken(user);
+
+            revokeAllTokenByUser(user);
+            saveSessionToken(user, accessToken, refreshToken);
+
+            return new ResponseEntity(AuthenticationResponse
+                    .builder()
+                    .accessToken(accessToken)
+                    .refreshToken(refreshToken)
+                    .build(), HttpStatus.OK);
+        }
+
+        return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+    }
+
+    private void saveSessionToken(User user, String accessToken, String refreshToken) {
         SessionToken sessionToken = new SessionToken();
-        sessionToken.setUser(_user);
-        sessionToken.setToken(token);
+        sessionToken.setUser(user);
+        sessionToken.setAccessToken(accessToken);
+        sessionToken.setRefreshToken(refreshToken);
         sessionToken.setLoggedOut(false);
         sessionTokenRepository.save(sessionToken);
     }
 
-    private void getValidTokens(User user) {
+    private void revokeAllTokenByUser(User user) {
         List<SessionToken> validTokens = sessionTokenRepository.findAllByUser(user.getId());
         if (!validTokens.isEmpty()) {
             validTokens.forEach(t -> {

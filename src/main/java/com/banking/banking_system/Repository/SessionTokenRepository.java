@@ -16,5 +16,7 @@ public interface SessionTokenRepository extends JpaRepository<SessionToken, Long
 """)
     List<SessionToken> findAllByUser(Long userId);
 
-    Optional<SessionToken> findByToken(String token);
+    Optional<SessionToken> findByAccessToken(String accessToken);
+
+    Optional<SessionToken> findByRefreshToken(String refreshToken);
 }

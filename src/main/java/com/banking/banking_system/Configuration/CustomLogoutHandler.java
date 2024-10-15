@@ -22,7 +22,7 @@ public class CustomLogoutHandler implements LogoutHandler {
         }
         final String jwt = authHeader.substring(7);
 
-        SessionToken token = sessionTokenRepository.findByToken(jwt).orElse(null);
+        SessionToken token = sessionTokenRepository.findByAccessToken(jwt).orElse(null);
 
         if (token != null) {
             token.setLoggedOut(true);

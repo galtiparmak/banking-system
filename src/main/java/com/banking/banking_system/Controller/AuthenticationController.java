@@ -5,6 +5,8 @@ import com.banking.banking_system.Authentication.AuthenticationResponse;
 import com.banking.banking_system.Authentication.RegisterEmployeeRequest;
 import com.banking.banking_system.Authentication.RegisterUserRequest;
 import com.banking.banking_system.Service.AuthenticationService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,4 +44,12 @@ public class AuthenticationController {
     public ResponseEntity<AuthenticationResponse> authenticateAdmin(@RequestParam String username, @RequestParam String password) {
         return ResponseEntity.ok(authenticationService.authenticateAdmin(username, password));
     } // http://localhost:8080/api/auth/authenticateAdmin?username=...&password=...
+
+    @PostMapping("/refreshTokenForUser")
+    public ResponseEntity<AuthenticationResponse> refreshTokenForUser(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) {
+        return authenticationService.refreshTokenForUser(request, response);
+    }
 }
