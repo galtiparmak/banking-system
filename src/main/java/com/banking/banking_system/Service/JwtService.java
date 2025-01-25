@@ -78,7 +78,7 @@ public class JwtService {
     public boolean isRefreshTokenValid(String token, UserDetails userDetails) {
         final String username = extractUserName(token);
         boolean isValidToken = sessionTokenRepository.findByRefreshToken(token)
-                .map(t -> !t.isLoggedOut()).orElse(false);
+                                .map(t -> !t.isLoggedOut()).orElse(false);
         return username.equals(userDetails.getUsername()) && !isTokenExpired(token) && isValidToken;
     }
 

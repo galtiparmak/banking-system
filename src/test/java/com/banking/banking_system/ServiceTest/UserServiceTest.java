@@ -41,7 +41,7 @@ public class UserServiceTest {
 
         when(userRepository.findByTc("12345678901")).thenReturn(Optional.of(user));
 
-        boolean result = userService.doesUserHaveBankCard("12345678901");
+        boolean result = userService.doesUserHaveBankCard();
         assertTrue(result, "User should have a bank card");
     }
 
@@ -52,7 +52,7 @@ public class UserServiceTest {
 
         when(userRepository.findByTc("12345678902")).thenReturn(Optional.of(user));
 
-        boolean result = userService.doesUserHaveBankCard("12345678902");
+        boolean result = userService.doesUserHaveBankCard();
         assertFalse(result, "User should not have a bank card");
     }
 
@@ -60,7 +60,7 @@ public class UserServiceTest {
     void testUserNotFound() {
         when(userRepository.findByTc("12345678903")).thenReturn(Optional.empty());
 
-        boolean result = userService.doesUserHaveBankCard("12345678903");
+        boolean result = userService.doesUserHaveBankCard();
         assertFalse(result, "User should not be found");
     }
 
@@ -73,7 +73,7 @@ public class UserServiceTest {
 
         when(userRepository.findByTc("12345678901")).thenReturn(Optional.of(user));
 
-        boolean result = userService.doesUserHaveCreditCard("12345678901");
+        boolean result = userService.doesUserHaveCreditCard();
         assertTrue(result, "User should have a credit card");
     }
 
@@ -84,7 +84,7 @@ public class UserServiceTest {
 
         when(userRepository.findByTc("12345678902")).thenReturn(Optional.of(user));
 
-        boolean result = userService.doesUserHaveCreditCard("12345678902");
+        boolean result = userService.doesUserHaveCreditCard();
         assertFalse(result, "User should not have a credit card");
     }
 
@@ -95,7 +95,7 @@ public class UserServiceTest {
 
         when(userRepository.findByTc("12345678901")).thenReturn(Optional.of(user));
 
-        boolean result = userService.getUser("12345678901") != null;
+        boolean result = userService.getUser() != null;
 
         assertTrue(result, "User should be found");
     }
@@ -108,7 +108,7 @@ public class UserServiceTest {
 
         when(userRepository.findByTc("12345678901")).thenReturn(Optional.of(user));
 
-        boolean result = userService.updateUserAge("12345678901", 21);
+        boolean result = userService.updateUserAge(21);
 
         assertTrue(result, "User should be updated");
     }
@@ -117,7 +117,7 @@ public class UserServiceTest {
     void testUpdateUserAgeUserNotFound() {
         when(userRepository.findByTc("12345678901")).thenReturn(Optional.empty());
 
-        boolean result = userService.updateUserAge("12345678901", 21);
+        boolean result = userService.updateUserAge(21);
 
         assertFalse(result, "User should not be found");
     }
